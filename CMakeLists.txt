@@ -11,3 +11,4 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 enable_testing()
 
 add_subdirectory(src)
+add_subdirectory(test)
