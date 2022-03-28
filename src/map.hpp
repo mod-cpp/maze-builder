@@ -99,10 +99,7 @@ struct half_map {
     if (!is_valid(p) || !is_valid({ p.x + 3, p.y + 3 }))
       return false;
 
-    auto view = cor3ntin::rangesnext::product(
-                  std::views::iota(p.x, p.x + 4),
-                  std::views::iota(p.y, p.y + 4)) |
-                std::views::transform(&std::make_from_tuple<position, std::tuple<int, int>>);
+    auto view = create_positions({p.x, p.y}, { p.x + 4, p.y + 4 });
     return std::ranges::all_of(view, std::bind_front(&half_map::is_empty, this));
   }
 
@@ -116,11 +113,15 @@ struct half_map {
     return std::ranges::all_of(view, std::bind_front(&half_map::is_wall, this));
   }
 
-  constexpr auto all() const {
+  constexpr auto create_positions(position top_left, position bottom_right) const {
     return cor3ntin::rangesnext::product(
-             std::views::iota(0uz, width),
-             std::views::iota(0uz, height)) |
+               std::views::iota(top_left.x, bottom_right.x),
+               std::views::iota(top_left.y, bottom_right.y)) |
            std::views::transform(&std::make_from_tuple<position, std::tuple<int, int>>);
+  }
+
+  constexpr auto all() const {
+    return create_positions({0uz, 0uz}, {width, height});
   }
 
   constexpr void collect_valid_starting_positions() {
