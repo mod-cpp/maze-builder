@@ -268,13 +268,14 @@ struct fmt::formatter<map<width, height>> {
   template<typename FormatContext>
   auto format(const map<width, height> & m, FormatContext & ctx)
     -> decltype(ctx.out()) {
-    for (std::size_t y = 0; y < height; y++) {
-      for (std::size_t x = 0; x < width; x++) {
-        format_to(ctx.out(), "{}", m.walls[y][x] ? "🟨" : "🟦");
+      for(auto && [y, x] : cor3ntin::rangesnext::product(
+               std::views::iota(0uz, height),
+               std::views::iota(0uz, width))) {
+          format_to(ctx.out(), "{}", m.walls[y][x] ? "🟨" : "🟦");
+          if(x == width - 1)
+              format_to(ctx.out(), "\n");
       }
-      format_to(ctx.out(), "\n");
-    }
-    return ctx.out();
+      return ctx.out();
   }
 };
 
