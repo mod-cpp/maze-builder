@@ -11,6 +11,10 @@
 #include "cartesian_product.hpp"
 
 
+// constexpr Pac-Man Maze Generator
+// inspired by https://github.com/shaunlebron/pacman-mazegen
+
+
 template<std::size_t width, std::size_t height>
 struct half_map;
 
@@ -20,6 +24,7 @@ struct map {
     for (std::size_t i = 0; i < height; i++) {
       auto line = std::views::all(hm.walls[i]);
       std::ranges::copy(line, std::ranges::begin(walls[i]));
+
       int n = width;
       for (auto & c : line) {
         walls[i][--n] = c; // reverse doesn't work here?
@@ -48,6 +53,33 @@ struct half_map {
       std::ranges::copy(
         view | std::views::drop(y * width) | std::views::take(width),
         std::begin(walls[y]));
+    }
+  }
+
+  std::vector<position> free_positions;
+  std::vector<std::tuple<position, std::vector<position>>> connections;
+  bool walls[height][width] = { 0 };
+
+  rng::PCG pcg = [](int count = 30) {
+    rng::PCG pcg;
+    while (count > 0) {
+      pcg();
+      --count;
+    }
+    return pcg;
+  }();
+
+    auto get_random_number_runtime() {
+    static std::random_device rd;
+    return rd();
+  }
+
+  constexpr auto get_random() {
+    if(std::is_constant_evaluated()) {
+        return pcg();
+    }
+    else {
+        return get_random_number_runtime();
     }
   }
 
@@ -97,33 +129,6 @@ struct half_map {
 
     auto view = all() | std::views::filter(std::bind_front(&half_map::can_fit_new_block, this));
     std::ranges::copy(view, std::back_inserter(free_positions));
-  }
-
-  std::vector<position> free_positions;
-  std::vector<std::tuple<position, std::vector<position>>> connections;
-  bool walls[height][width] = { 0 };
-
-  rng::PCG pcg = [](int count = 30) {
-    rng::PCG pcg;
-    while (count > 0) {
-      pcg();
-      --count;
-    }
-    return pcg;
-  }();
-
-  auto get_random_number_runtime() {
-    static std::random_device rd;
-    return rd();
-  }
-
-  constexpr auto get_random() {
-    if(std::is_constant_evaluated()) {
-        return pcg();
-    }
-    else {
-        return get_random_number_runtime();
-    }
   }
 
   constexpr bool has_free_position(position pos) const {
