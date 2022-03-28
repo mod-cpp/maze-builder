@@ -93,6 +93,8 @@ struct half_map {
 
   constexpr void collect_valid_starting_positions() {
     free_positions.clear();
+    free_positions.reserve(width * height);
+
     auto view = all() | std::views::filter(std::bind_front(&half_map::can_fit_new_block, this));
     std::ranges::copy(view, std::back_inserter(free_positions));
   }
@@ -157,6 +159,7 @@ struct half_map {
 
   constexpr void collect_connections() {
     connections.clear();
+    connections.reserve(width * height);
     auto view = all() | std::views::filter(std::bind_front(&half_map::has_free_position, this));
 
     auto four = std::views::iota(0, 4);
