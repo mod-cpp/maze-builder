@@ -270,7 +270,7 @@ struct half_map {
         auto p0 = position{p.x + dx*i, p.y+dy*i};
         if((!turn && count >= turn_blocks) || !has_free_position(p0)) {
             turn = true;
-            std::tie(dx, dy) = std::pair{-dy, dx};
+            std::tie(dx, dy) = std::tuple{-dy, dx};
             i = 1;
             if(orig == position{dx, dy})
                 break;
