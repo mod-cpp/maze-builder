@@ -169,7 +169,8 @@ struct half_map {
   constexpr void collect_connections() {
     connections.clear();
     connections.reserve(width * height);
-    auto view = all() | std::views::filter(std::bind_front(&half_map::has_free_position, this));
+    auto predicate = [this](const auto & pos){ return has_free_position(pos); };
+    auto view = all() | std::views::filter(predicate);
 
     auto four = std::views::iota(0, 4);
     for (const auto & pos : view) {
