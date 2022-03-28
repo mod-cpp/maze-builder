@@ -100,7 +100,8 @@ struct half_map {
       return false;
 
     auto view = create_positions({p.x, p.y}, { p.x + 4, p.y + 4 });
-    return std::ranges::all_of(view, std::bind_front(&half_map::is_empty, this));
+    auto predicate = [this](const auto & pos){ return is_empty(pos); };
+    return std::ranges::all_of(view, predicate);
   }
 
   constexpr bool is_wall_block_filled(position p) const {
