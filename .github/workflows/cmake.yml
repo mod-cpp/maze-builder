@@ -32,8 +32,7 @@ jobs:
 
     - name: Load GitHub Cache
       uses: actions/cache@v3
-      env:
-        cache-name: common-cache
+      id: common-cache
       with:
         path: |
           ${{runner.workspace}}/build/vcpkg_installed
@@ -43,7 +42,7 @@ jobs:
 
     - name: Latest GCC - Get deb
       working-directory: ${{runner.workspace}}/gcc-latest
-      if: steps.common-cache.outputs.cache-hit != 'true'
+      if: steps.common-cache.outputs['cache-hit'] != 'true'
       run: wget -q http://kayari.org/gcc-latest/gcc-latest.deb
 
     - name: Latest GCC - Install deb
@@ -64,6 +63,6 @@ jobs:
 
     - name: Test
       working-directory: ${{github.workspace}}/build
-      # Execute tests defined by the CMake configuration.  
+      # Execute tests defined by the CMake configuration.
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest -C ${{env.BUILD_TYPE}}
