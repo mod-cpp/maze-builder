@@ -33,17 +33,17 @@ jobs:
     - name: Load GitHub Cache
       uses: actions/cache@v2
       env:
-        cache-name: gcc-latest
+        cache-name: common-cache
       with:
         path: |
           ${{runner.workspace}}/build/vcpkg_installed
           ${{runner.workspace}}/build/_deps
           ${{runner.workspace}}/gcc-latest
-        key: maze-builder-${{ hashFiles('vcpkg.json') }}
+        key: maze-builder-${{ hashFiles('vcpkg.json') }}-${{ hashFiles('cmake/vcpkg.cmake') }}
 
     - name: Latest GCC - Get deb
       working-directory: ${{runner.workspace}}/gcc-latest
-      if: steps.gcc-latest.outputs.cache-hit != 'true'
+      if: steps.common-cache.outputs.cache-hit != 'true'
       run: wget -q http://kayari.org/gcc-latest/gcc-latest.deb
 
     - name: Latest GCC - Install deb
