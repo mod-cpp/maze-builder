@@ -42,7 +42,7 @@ jobs:
 
     - name: Latest GCC - Get deb
       working-directory: ${{runner.workspace}}/gcc-latest
-      if: steps.common-cache.outputs['cache-hit'] != 'true'
+      if: steps.common-cache.outputs.cache-hit != 'true'
       run: wget -q http://kayari.org/gcc-latest/gcc-latest.deb
 
     - name: Latest GCC - Install deb
