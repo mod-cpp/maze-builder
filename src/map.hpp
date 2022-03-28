@@ -121,7 +121,7 @@ struct half_map {
            std::views::transform(&std::make_from_tuple<position, std::tuple<int, int>>);
   }
 
-  constexpr auto all() const {
+  constexpr auto all_positions() const {
     return create_positions({0uz, 0uz}, {width, height});
   }
 
@@ -130,7 +130,7 @@ struct half_map {
     free_positions.reserve(width * height);
 
     auto predicate = [this](const auto & pos){ return can_fit_new_block(pos); };
-    auto view = all() | std::views::filter(predicate);
+    auto view = all_positions() | std::views::filter(predicate);
 
     std::ranges::copy(view, std::back_inserter(free_positions));
   }
@@ -178,7 +178,7 @@ struct half_map {
     connections.clear();
     connections.reserve(width * height);
     auto predicate = [this](const auto & pos){ return has_free_position(pos); };
-    auto view = all() | std::views::filter(predicate);
+    auto view = all_positions() | std::views::filter(predicate);
 
     //     |  c  |  c |  c |  c |
     //   a | x,y |    |    |    | b |
