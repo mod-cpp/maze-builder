@@ -31,7 +31,7 @@ jobs:
       run: mkdir -p ${{runner.workspace}}/gcc-latest
 
     - name: Load GitHub Cache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       env:
         cache-name: common-cache
       with:
