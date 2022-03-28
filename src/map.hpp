@@ -127,7 +127,9 @@ struct half_map {
     free_positions.clear();
     free_positions.reserve(width * height);
 
-    auto view = all() | std::views::filter(std::bind_front(&half_map::can_fit_new_block, this));
+    auto predicate = [this](const auto & pos){ return can_fit_new_block(pos); };
+    auto view = all() | std::views::filter(predicate);
+
     std::ranges::copy(view, std::back_inserter(free_positions));
   }
 
