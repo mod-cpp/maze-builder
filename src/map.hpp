@@ -164,7 +164,7 @@ struct half_map {
     connect({ x + dx, y + dy });
     connect({ x + 2 * dx, y + 2 * dy });
 
-    if (!has_free_position({ x - dx, y - dx }))
+    if (!has_free_position({ x - dy, y - dx }))
       connect({ x + dx - dy, y + dy - dx });
     if (!has_free_position({ x + dy, y + dx }))
       connect({ x + dx + dy, y + dy + dx });
