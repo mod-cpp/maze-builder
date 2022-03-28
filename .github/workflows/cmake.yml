@@ -35,10 +35,11 @@ jobs:
       id: common-cache
       with:
         path: |
+          /home/runner/.cache/vcpkg
           ${{runner.workspace}}/build/vcpkg_installed
           ${{runner.workspace}}/build/_deps
           ${{runner.workspace}}/gcc-latest
-        key: maze-builder-${{ hashFiles('vcpkg.json') }}-${{ hashFiles('cmake/vcpkg.cmake') }}
+        key: maze-builder-${{ hashFiles('vcpkg.json') }}-${{ hashFiles('cmake/vcpkg.cmake') }}-2
 
     - name: Latest GCC - Get deb
       working-directory: ${{runner.workspace}}/gcc-latest
