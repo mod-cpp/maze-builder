@@ -152,6 +152,14 @@ struct half_map {
         it = connections.insert(it, std::tuple{ dest, std::vector<position>{} });
       std::get<1>(*it).push_back(pos);
     };
+
+    //     |  c  |  c |  c |  c |
+    //   a | x,y |    |    |    | b |
+    //   a |     |    |    |    | b |
+    //   a |     |    |    |    | b |
+    //   a |     |    |    |    | b |
+    //     |  d  |  d |  d |  d |
+
     auto [x, y] = pos;
     connect({ x + dx, y + dy });
     connect({ x + 2 * dx, y + 2 * dy });
@@ -171,6 +179,13 @@ struct half_map {
     connections.reserve(width * height);
     auto predicate = [this](const auto & pos){ return has_free_position(pos); };
     auto view = all() | std::views::filter(predicate);
+
+    //     |  c  |  c |  c |  c |
+    //   a | x,y |    |    |    | b |
+    //   a |     |    |    |    | b |
+    //   a |     |    |    |    | b |
+    //   a |     |    |    |    | b |
+    //     |  d  |  d |  d |  d |
 
     auto four = std::views::iota(0, 4);
     for (const auto & pos : view) {
