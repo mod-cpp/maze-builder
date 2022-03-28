@@ -20,6 +20,26 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Latest GCC - Create install folder
+      run: mkdir -p ${{runner.workspace}}/gcc-latest
+
+    - name: Latest GCC - Cache
+      uses: actions/cache@v2
+      env:
+        cache-name: gcc-latest
+      with:
+        path: ${{runner.workspace}}/gcc-latest
+        key: gcc-latest
+
+    - name: Latest GCC - Get deb
+      working-directory: ${{runner.workspace}}/gcc-latest
+      if: steps.gcc-latest.outputs.cache-hit != 'true'
+      run: wget http://kayari.org/gcc-latest/gcc-latest.deb
+
+    - name: Latest GCC - Install deb
+      working-directory: ${{runner.workspace}}/gcc-latest
+      run: sudo dpkg -i gcc-latest.deb
+
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
