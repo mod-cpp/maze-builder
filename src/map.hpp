@@ -318,8 +318,3 @@ constexpr auto create_random_map() {
 
   return hm;
 }
-
-int main() {
-  constexpr map m{ create_random_map() };
-  fmt::print("{}", m);
-}
