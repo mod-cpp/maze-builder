@@ -22,16 +22,11 @@ template<std::size_t width, std::size_t height>
 struct map {
   constexpr map(half_map<width / 2, height> hm) {
     for (std::size_t i = 0; i < height; i++) {
-      auto line = std::views::all(hm.walls[i]);
-      std::ranges::copy(line, std::ranges::begin(walls[i]));
-
-      int n = width;
-      for (auto & c : line) {
-        walls[i][--n] = c; // reverse doesn't work here?
-      }
+      std::ranges::copy(hm.walls[i], std::ranges::begin(walls[i]));
+      std::ranges::copy(hm.walls[i], std::ranges::rbegin(walls[i]));
     }
   }
-  bool walls[height][width] = { 0 };
+  std::array<std::array<bool, width>, height> walls;
 };
 
 template<std::size_t width, std::size_t height>
@@ -58,7 +53,7 @@ struct half_map {
 
   std::vector<position> free_positions;
   std::vector<std::tuple<position, std::vector<position>>> connections;
-  bool walls[height][width] = { 0 };
+  std::array<std::array<bool, width>, height> walls;
 
   rng::PCG pcg = [](int count = 30) {
     rng::PCG pcg;
