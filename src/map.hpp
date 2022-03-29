@@ -148,12 +148,17 @@ struct half_map {
       std::get<1>(*it).push_back(pos);
     };
 
-    //     |  c  |  c |  c |  c |
-    //   a | x,y |    |    |    | b |
-    //   a |     |    |    |    | b |
-    //   a |     |    |    |    | b |
-    //   a |     |    |    |    | b |
-    //     |  d  |  d |  d |  d |
+    // A - add_connection(pos, dx =  1, dy =  0);
+    // B - add_connection(pos, dx = -1, dy =  0);
+    // C - add_connection(pos, dx =  0, dy =  1);
+    // D - add_connection(pos, dx =  0, dy = -1);
+    //
+    //     |     |     |     |     |     |
+    //     | x,y |     |     |     |     |
+    //     |     |     |     |     |     |
+    //     |     |     |     |     |     |
+    //     |     |     |     |     |     |
+    //     |     |     |     |     |     |
 
     auto [x, y] = pos;
     connect({ x + dx, y + dy });
