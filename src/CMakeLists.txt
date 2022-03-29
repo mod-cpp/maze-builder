@@ -1,5 +1,7 @@
-add_executable(maze-builder cartesian_product.hpp
+add_executable(maze-builder
+               cartesian_product.hpp
                compiletime_random.hpp
+               enumerate.hpp
                main.cpp
                map.hpp
                )

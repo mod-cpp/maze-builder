@@ -1,5 +1,6 @@
 #include "cartesian_product.hpp"
 #include "compiletime_random.hpp"
+#include "enumerate.hpp"
 #include <algorithm>
 #include <fmt/format.h>
 #include <functional>
@@ -19,9 +20,9 @@ struct half_map;
 template<std::size_t width, std::size_t height>
 struct map {
   constexpr map(half_map<width / 2, height> hm) {
-    for (std::size_t i = 0; i < height; i++) {
-      std::ranges::copy(hm.walls[i], std::ranges::begin(walls[i]));
-      std::ranges::copy(hm.walls[i], std::ranges::rbegin(walls[i]));
+    for (const auto & [index, row] : cor3ntin::rangesnext::enumerate(hm.walls)) {
+      std::ranges::copy(row, std::ranges::begin(walls[index]));
+      std::ranges::copy(row, std::ranges::rbegin(walls[index]));
     }
   }
   std::array<std::array<bool, width>, height> walls;
@@ -80,11 +81,11 @@ struct half_map {
   }
 
   constexpr bool is_empty(position p) const {
-    return is_valid(p) && !walls[p.y][p.x];
+    return is_valid(p) && !walls[static_cast<std::size_t>(p.y)][static_cast<std::size_t>(p.x)];
   }
 
   constexpr bool is_wall(position p) const {
-    return is_valid(p) && walls[p.y][p.x];
+    return is_valid(p) && walls[static_cast<std::size_t>(p.y)][static_cast<std::size_t>(p.x)];
   }
 
   constexpr bool can_fit_new_block(position p) const {
@@ -209,7 +210,7 @@ struct half_map {
 
   constexpr void add_wall_tile(const position & p) {
     if (is_valid(p)) {
-      walls[p.y][p.x] = true;
+      walls[static_cast<std::size_t>(p.y)][static_cast<std::size_t>(p.x)] = true;
     }
   }
 
