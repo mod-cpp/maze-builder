@@ -14,6 +14,21 @@
 // constexpr Pac-Man Maze Generator
 // inspired by https://github.com/shaunlebron/pacman-mazegen
 
+template<typename T, std::size_t width, std::size_t height>
+struct board : std::array<std::array<T, width>, height> {
+    using Base = std::array<std::array<T, width>, height>;
+
+    using Base::operator[];
+
+    constexpr T & operator[](std::size_t x, std::size_t y) {
+        return Base::operator[](y)[x];
+    }
+
+    constexpr const T & operator[](std::size_t x, std::size_t y) const{
+        return Base::operator[](y)[x];
+    }
+};
+
 template<std::size_t width, std::size_t height>
 struct half_map;
 
@@ -25,7 +40,7 @@ struct map {
       std::ranges::copy(row, std::ranges::rbegin(walls[index]));
     }
   }
-  std::array<std::array<bool, width>, height> walls;
+  board<bool, width, height> walls;
 };
 
 template<std::size_t width, std::size_t height>
@@ -52,7 +67,7 @@ struct half_map {
 
   std::vector<position> free_positions;
   std::vector<std::tuple<position, std::vector<position>>> connections;
-  std::array<std::array<bool, width>, height> walls;
+  board<bool, width, height> walls;
 
   rng::PCG pcg = [](int count = 30) {
     rng::PCG pcg;
@@ -81,11 +96,11 @@ struct half_map {
   }
 
   constexpr bool is_empty(position p) const {
-    return is_valid(p) && !walls[static_cast<std::size_t>(p.y)][static_cast<std::size_t>(p.x)];
+    return is_valid(p) && !walls[static_cast<std::size_t>(p.x), static_cast<std::size_t>(p.y)];
   }
 
   constexpr bool is_wall(position p) const {
-    return is_valid(p) && walls[static_cast<std::size_t>(p.y)][static_cast<std::size_t>(p.x)];
+    return is_valid(p) && walls[static_cast<std::size_t>(p.x), static_cast<std::size_t>(p.y)];
   }
 
   constexpr bool can_fit_new_block(position p) const {
@@ -210,7 +225,7 @@ struct half_map {
 
   constexpr void add_wall_tile(const position & p) {
     if (is_valid(p)) {
-      walls[static_cast<std::size_t>(p.y)][static_cast<std::size_t>(p.x)] = true;
+      walls[static_cast<std::size_t>(p.x), static_cast<std::size_t>(p.y)] = true;
     }
   }
 
@@ -300,7 +315,7 @@ struct fmt::formatter<map<width, height>> {
     for (auto && [y, x] : polyfill::product(
            std::views::iota(0uz, height),
            std::views::iota(0uz, width))) {
-      format_to(ctx.out(), "{}", m.walls[y][x] ? "🟨" : "🟦");
+      format_to(ctx.out(), "{}", m.walls[x, y] ? "🟨" : "🟦");
       if (x == width - 1)
         format_to(ctx.out(), "\n");
     }
