@@ -8,7 +8,7 @@ Licenced under Boost Software License license. See LICENSE.md for details.
 
 #include "cartesian_product.hpp"
 
-namespace cor3ntin::rangesnext {
+namespace polyfill {
 
 namespace r = std::ranges;
 
@@ -313,4 +313,4 @@ struct enumerate_view_fn {
 
 inline detail::enumerate_view_fn enumerate;
 
-} // namespace cor3ntin::rangesnext
+} // namespace polyfill

@@ -3,7 +3,7 @@
 #include <ranges>
 #include <utility>
 
-namespace cor3ntin::rangesnext::detail {
+namespace polyfill::detail {
 
 namespace r = std::ranges;
 
@@ -40,12 +40,12 @@ template<typename F, typename S>
 inline constexpr bool pair_like<std::pair<F, S>> = true;
 template<typename F, typename S>
 inline constexpr bool pair_like<std::tuple<F, S>> = true;
-} // namespace cor3ntin::rangesnext::detail
+} // namespace polyfill::detail
 
 #include <ranges>
 #include <tuple>
 
-namespace cor3ntin::rangesnext {
+namespace polyfill {
 
 namespace r = std::ranges;
 
@@ -380,4 +380,4 @@ struct product_view_fn {
 
 inline detail::product_view_fn product;
 
-} // namespace cor3ntin::rangesnext
+} // namespace polyfill

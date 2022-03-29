@@ -20,7 +20,7 @@ struct half_map;
 template<std::size_t width, std::size_t height>
 struct map {
   constexpr map(half_map<width / 2, height> hm) {
-    for (const auto & [index, row] : cor3ntin::rangesnext::enumerate(hm.walls)) {
+    for (const auto & [index, row] : polyfill::enumerate(hm.walls)) {
       std::ranges::copy(row, std::ranges::begin(walls[index]));
       std::ranges::copy(row, std::ranges::rbegin(walls[index]));
     }
@@ -100,7 +100,7 @@ struct half_map {
   }
 
   constexpr bool is_wall_block_filled(position p) const {
-    auto view = cor3ntin::rangesnext::product(
+    auto view = polyfill::product(
                   std::views::iota(1, 3),
                   std::views::iota(1, 3)) |
                 std::views::transform([&](const auto & tuple) {
@@ -110,7 +110,7 @@ struct half_map {
   }
 
   constexpr auto create_positions(position top_left, position bottom_right) const {
-    return cor3ntin::rangesnext::product(
+    return polyfill::product(
              std::views::iota(top_left.x, bottom_right.x),
              std::views::iota(top_left.y, bottom_right.y)) |
            std::views::transform(&std::make_from_tuple<position, std::tuple<int, int>>);
@@ -297,7 +297,7 @@ struct fmt::formatter<map<width, height>> {
   template<typename FormatContext>
   auto format(const map<width, height> & m, FormatContext & ctx)
     -> decltype(ctx.out()) {
-    for (auto && [y, x] : cor3ntin::rangesnext::product(
+    for (auto && [y, x] : polyfill::product(
            std::views::iota(0uz, height),
            std::views::iota(0uz, width))) {
       format_to(ctx.out(), "{}", m.walls[y][x] ? "🟨" : "🟦");
