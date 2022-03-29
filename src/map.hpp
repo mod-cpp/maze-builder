@@ -16,17 +16,17 @@
 
 template<typename T, std::size_t width, std::size_t height>
 struct board : std::array<std::array<T, width>, height> {
-    using Base = std::array<std::array<T, width>, height>;
+  using Base = std::array<std::array<T, width>, height>;
 
-    using Base::operator[];
+  using Base::operator[];
 
-    constexpr T & operator[](std::size_t x, std::size_t y) {
-        return Base::operator[](y)[x];
-    }
+  constexpr T & operator[](std::size_t x, std::size_t y) {
+    return Base::operator[](y)[x];
+  }
 
-    constexpr const T & operator[](std::size_t x, std::size_t y) const{
-        return Base::operator[](y)[x];
-    }
+  constexpr const T & operator[](std::size_t x, std::size_t y) const {
+    return Base::operator[](y)[x];
+  }
 };
 
 template<std::size_t width, std::size_t height>
