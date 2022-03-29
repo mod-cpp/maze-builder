@@ -1,19 +1,17 @@
+#include "cartesian_product.hpp"
+#include "compiletime_random.hpp"
 #include <algorithm>
 #include <fmt/format.h>
 #include <functional>
 #include <limits>
 #include <map>
+#include <random>
 #include <ranges>
 #include <string_view>
 #include <vector>
-#include <random>
-#include "compiletime_random.hpp"
-#include "cartesian_product.hpp"
-
 
 // constexpr Pac-Man Maze Generator
 // inspired by https://github.com/shaunlebron/pacman-mazegen
-
 
 template<std::size_t width, std::size_t height>
 struct half_map;
@@ -64,22 +62,21 @@ struct half_map {
     return pcg;
   }();
 
-    auto get_random_number_runtime() {
+  auto get_random_number_runtime() {
     static std::random_device rd;
     return rd();
   }
 
   constexpr auto get_random() {
-    if(std::is_constant_evaluated()) {
-        return pcg();
-    }
-    else {
-        return get_random_number_runtime();
+    if (std::is_constant_evaluated()) {
+      return pcg();
+    } else {
+      return get_random_number_runtime();
     }
   }
 
   constexpr bool is_valid(position p) const {
-    return p.x>= 0 && static_cast<std::size_t>(p.x) < width && p.y>=0 && static_cast<std::size_t>(p.y) < height;
+    return p.x >= 0 && static_cast<std::size_t>(p.x) < width && p.y >= 0 && static_cast<std::size_t>(p.y) < height;
   }
 
   constexpr bool is_empty(position p) const {
@@ -94,8 +91,10 @@ struct half_map {
     if (!is_valid(p) || !is_valid({ p.x + 3, p.y + 3 }))
       return false;
 
-    auto view = create_positions({p.x, p.y}, { p.x + 4, p.y + 4 });
-    auto predicate = [this](const auto & pos){ return is_empty(pos); };
+    auto view = create_positions({ p.x, p.y }, { p.x + 4, p.y + 4 });
+    auto predicate = [this](const auto & pos) {
+      return is_empty(pos);
+    };
     return std::ranges::all_of(view, predicate);
   }
 
@@ -111,20 +110,22 @@ struct half_map {
 
   constexpr auto create_positions(position top_left, position bottom_right) const {
     return cor3ntin::rangesnext::product(
-               std::views::iota(top_left.x, bottom_right.x),
-               std::views::iota(top_left.y, bottom_right.y)) |
+             std::views::iota(top_left.x, bottom_right.x),
+             std::views::iota(top_left.y, bottom_right.y)) |
            std::views::transform(&std::make_from_tuple<position, std::tuple<int, int>>);
   }
 
   constexpr auto all_positions() const {
-    return create_positions({0uz, 0uz}, {width, height});
+    return create_positions({ 0uz, 0uz }, { width, height });
   }
 
   constexpr void collect_valid_starting_positions() {
     free_positions.clear();
     free_positions.reserve(width * height);
 
-    auto predicate = [this](const auto & pos){ return can_fit_new_block(pos); };
+    auto predicate = [this](const auto & pos) {
+      return can_fit_new_block(pos);
+    };
     auto view = all_positions() | std::views::filter(predicate);
 
     std::ranges::copy(view, std::back_inserter(free_positions));
@@ -177,7 +178,9 @@ struct half_map {
   constexpr void collect_connections() {
     connections.clear();
     connections.reserve(width * height);
-    auto predicate = [this](const auto & pos){ return has_free_position(pos); };
+    auto predicate = [this](const auto & pos) {
+      return has_free_position(pos);
+    };
     auto view = all_positions() | std::views::filter(predicate);
 
     //     |  c  |  c |  c |  c |
@@ -256,31 +259,30 @@ struct half_map {
     int max_blocks = 4;
     bool turn = false;
     int turn_blocks = max_blocks;
-    if((get_random() %  100) <= 35) {
-        turn_blocks = 4;
-        max_blocks += turn_blocks;
+    if ((get_random() % 100) <= 35) {
+      turn_blocks = 4;
+      max_blocks += turn_blocks;
     }
 
-    std::array<position, 4> directions = {{
-        {0, -1}, {0, 1}, {1, 0}, {-1, 0}
-    }};
+    std::array<position, 4> directions = { { { 0, -1 }, { 0, 1 }, { 1, 0 }, { -1, 0 } } };
     auto orig = directions[get_random() % 4];
     auto [dx, dy] = orig;
-    for(int i = 0; count < max_blocks;) {
-        auto p0 = position{p.x + dx*i, p.y+dy*i};
-        if((!turn && count >= turn_blocks) || !has_free_position(p0)) {
-            turn = true;
-            std::tie(dx, dy) = std::tuple{-dy, dx};
-            i = 1;
-            if(orig == position{dx, dy})
-                break;
-            else continue;
-        }
-        if(!is_wall_block_filled(p0)) {
-            add_wall_block(p0);
-            count += 1 + expand_wall(p0);
-        }
-        i++;
+    for (int i = 0; count < max_blocks;) {
+      auto p0 = position{ p.x + dx * i, p.y + dy * i };
+      if ((!turn && count >= turn_blocks) || !has_free_position(p0)) {
+        turn = true;
+        std::tie(dx, dy) = std::tuple{ -dy, dx };
+        i = 1;
+        if (orig == position{ dx, dy })
+          break;
+        else
+          continue;
+      }
+      if (!is_wall_block_filled(p0)) {
+        add_wall_block(p0);
+        count += 1 + expand_wall(p0);
+      }
+      i++;
     }
     return true;
   }
@@ -294,14 +296,14 @@ struct fmt::formatter<map<width, height>> {
   template<typename FormatContext>
   auto format(const map<width, height> & m, FormatContext & ctx)
     -> decltype(ctx.out()) {
-      for(auto && [y, x] : cor3ntin::rangesnext::product(
-               std::views::iota(0uz, height),
-               std::views::iota(0uz, width))) {
-          format_to(ctx.out(), "{}", m.walls[y][x] ? "🟨" : "🟦");
-          if(x == width - 1)
-              format_to(ctx.out(), "\n");
-      }
-      return ctx.out();
+    for (auto && [y, x] : cor3ntin::rangesnext::product(
+           std::views::iota(0uz, height),
+           std::views::iota(0uz, width))) {
+      format_to(ctx.out(), "{}", m.walls[y][x] ? "🟨" : "🟦");
+      if (x == width - 1)
+        format_to(ctx.out(), "\n");
+    }
+    return ctx.out();
   }
 };
 
