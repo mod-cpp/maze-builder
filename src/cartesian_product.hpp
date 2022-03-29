@@ -1,5 +1,8 @@
 #pragma once
 
+#include <ranges>
+#include <utility>
+
 namespace cor3ntin::rangesnext::detail {
 
 namespace r = std::ranges;
