@@ -21,7 +21,7 @@
         {
             "name": "x64-windows",
             "description": "Sets x64 arch, compilers, build type",
-            "generator": "NMake Makefiles",
+            "generator": "Visual Studio 17 2022",
             "inherits": "base",
             "architecture": {
                 "value": "x64",
@@ -44,13 +44,55 @@
             }
         },
         {
+            "name": "x86-windows",
+            "description": "Sets x86 arch, compilers, build type",
+            "generator": "Visual Studio 17 2022",
+            "inherits": "base",
+            "architecture": {
+                "value": "x86",
+                "strategy": "external"
+            },
+            "toolset": {
+                "value": "host=x86",
+                "strategy": "external"
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_CXX_COMPILER": "cl"
+            },
+            "vendor": {
+                "microsoft.com/VisualStudioSettings/CMake/1.0": {
+                    "hostOS": [
+                        "Windows"
+                    ]
+                }
+            }
+        },
+        {
             "name": "linux-gcc",
-            "description": "Compile On linux with GCC",
+            "description": "Compile On Linux (GCC 10)",
             "inherits": "base",
             "generator": "Ninja",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_CXX_COMPILER": "g++"
+                "CMAKE_CXX_COMPILER": "g++-10"
+            },
+            "vendor": {
+                "microsoft.com/VisualStudioSettings/CMake/1.0": {
+                    "hostOS": [
+                        "Linux"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "linux-gcc-11",
+            "description": "Compile On Linux (GCC 11)",
+            "inherits": "base",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_CXX_COMPILER": "g++-11"
             },
             "vendor": {
                 "microsoft.com/VisualStudioSettings/CMake/1.0": {
@@ -62,7 +104,7 @@
         },
         {
             "name": "linux-clang",
-            "description": "Compile On linux with GCC",
+            "description": "Compile On Linux (Clang)",
             "inherits": "base",
             "generator": "Ninja",
             "cacheVariables": {
@@ -81,7 +123,7 @@
         {
             "name": "osx",
             "generator": "Ninja",
-            "description": "Compile on osx",
+            "description": "Compile on macOS",
             "inherits": "base",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
@@ -105,14 +147,25 @@
             "inheritConfigureEnvironment": true
         },
         {
-            "name": "windows-build",
+            "name": "x64-windows-build",
             "description": "Clean before build (--clean-first)",
             "configurePreset": "x64-windows",
             "inherits": "core-build"
         },
         {
+            "name": "x86-windows-build",
+            "description": "Clean before build (--clean-first)",
+            "configurePreset": "x86-windows",
+            "inherits": "core-build"
+        },
+        {
             "name": "linux-gcc-build",
             "configurePreset": "linux-gcc",
+            "inherits": "core-build"
+        },
+        {
+            "name": "linux-gcc-build-11",
+            "configurePreset": "linux-gcc-11",
             "inherits": "core-build"
         },
         {
@@ -137,16 +190,24 @@
             }
         },
         {
-            "name": "windows-tests",
-            "description": "Run tests on windows",
+            "name": "x64-windows-test",
+            "description": "Run tests on Windows",
             "configurePreset": "x64-windows",
             "inherits": [
                 "core-tests"
             ]
         },
         {
-            "name": "linux-test-gcc",
-            "description": "Run tests on linux (GCC)",
+            "name": "x86-windows-test",
+            "description": "Run tests on Windows",
+            "configurePreset": "x86-windows",
+            "inherits": [
+                "core-tests"
+            ]
+        },
+        {
+            "name": "linux-gcc-test",
+            "description": "Run tests on Linux (GCC 10)",
             "configurePreset": "linux-gcc",
             "displayName": "linux-test",
             "inherits": [
@@ -154,8 +215,17 @@
             ]
         },
         {
-            "name": "linux-test-clang",
-            "description": "Run tests on linux (Clang)",
+            "name": "linux-gcc-test-11",
+            "description": "Run tests on Linux (GCC 11)",
+            "configurePreset": "linux-gcc-11",
+            "displayName": "linux-test",
+            "inherits": [
+                "core-tests"
+            ]
+        },
+        {
+            "name": "linux-clang-test",
+            "description": "Run tests on Linux (Clang)",
             "configurePreset": "linux-clang",
             "displayName": "linux-test",
             "inherits": [
@@ -163,8 +233,8 @@
             ]
         },
         {
-            "name": "OSX test",
-            "description": "Run tests on Mac",
+            "name": "osx-test",
+            "description": "Run tests on macOS",
             "configurePreset": "osx",
             "inherits": [
                 "core-tests"
