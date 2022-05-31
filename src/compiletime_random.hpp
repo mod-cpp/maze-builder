@@ -1,3 +1,6 @@
+#pragma once
+#include <cstdint>
+
 // From Jason Turner
 // https://www.youtube.com/watch?v=rpn_5Mrrxf8
 namespace rng {
