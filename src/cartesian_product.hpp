@@ -31,7 +31,7 @@ consteval auto iter_cat() {
     return std::output_iterator_tag{};
 }
 
-template<class R>
+template<typename R>
 concept simple_view = r::view<R> && r::range<const R> && std::same_as<r::iterator_t<R>, r::iterator_t<const R>> && std::same_as<r::sentinel_t<R>, r::sentinel_t<const R>>;
 
 template<typename T>

@@ -12,7 +12,7 @@ namespace polyfill {
 
 namespace r = std::ranges;
 
-template<class R>
+template<typename R>
 concept simple_view = // exposition only
   r::view<R> && r::range<const R> && std::same_as<r::iterator_t<R>, r::iterator_t<const R>> && std::same_as<r::sentinel_t<R>, r::sentinel_t<const R>>;
 
